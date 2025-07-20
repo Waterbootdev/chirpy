@@ -13,11 +13,18 @@ type apiConfig struct {
 
 func (cfg *apiConfig) resetHandle(writer http.ResponseWriter, request *http.Request) {
 	cfg.fileserverHits.Store(0)
-	FprintResponse(writer, WriteHeaderContentTextPlainOK, "Hits reset")
+	FprintResponse(writer, WriteHeaderContentTextOK(PLAIN), "Hits reset")
 }
 
+const METRICSFORMAT = `<html>
+  <body>
+    <h1>Welcome, Chirpy Admin</h1>
+    <p>Chirpy has been visited %d times!</p>
+  </body>
+</html>`
+
 func (cfg *apiConfig) metricsHandler(writer http.ResponseWriter, request *http.Request) {
-	FprintfResponse(writer, WriteHeaderContentTextPlainOK, "Hits: %d", cfg.fileserverHits.Load())
+	FprintfResponse(writer, WriteHeaderContentTextOK(HTML), METRICSFORMAT, cfg.fileserverHits.Load())
 }
 
 func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {

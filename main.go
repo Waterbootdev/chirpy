@@ -7,7 +7,7 @@ import (
 )
 
 func healthzHandler(writer http.ResponseWriter, request *http.Request) {
-	FprintResponse(writer, WriteHeaderContentTextPlainOK, "OK")
+	FprintResponse(writer, WriteHeaderContentTextOK(PLAIN), "OK")
 }
 
 func main() {
@@ -26,8 +26,8 @@ func main() {
 	serveMux.Handle("/app/assets", httpFileServer)
 
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
-	serveMux.HandleFunc("GET /api/metrics", apiCfg.metricsHandler)
-	serveMux.HandleFunc("POST /api/reset", apiCfg.resetHandle)
+	serveMux.HandleFunc("GET /admin/metrics", apiCfg.metricsHandler)
+	serveMux.HandleFunc("POST /admin/reset", apiCfg.resetHandle)
 
 	httpServer.ListenAndServe()
 }
