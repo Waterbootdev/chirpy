@@ -25,9 +25,9 @@ func main() {
 	serveMux.Handle("/app/", httpFileServer)
 	serveMux.Handle("/app/assets", httpFileServer)
 
-	serveMux.HandleFunc("GET /healthz", healthzHandler)
-	serveMux.HandleFunc("GET metrics", apiCfg.metricsHandler)
-	serveMux.HandleFunc("POST reset", apiCfg.resetHandle)
+	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
+	serveMux.HandleFunc("GET /api/metrics", apiCfg.metricsHandler)
+	serveMux.HandleFunc("POST /api/reset", apiCfg.resetHandle)
 
 	httpServer.ListenAndServe()
 }
