@@ -5,20 +5,27 @@ import (
 	"net/http"
 )
 
-func FprintOKResponse(writer http.ResponseWriter, textType string, a ...any) {
-	FprintResponse(writer, WriteHeaderContentTextOK(textType), a...)
+func PrintPrintError(printPrintError bool, n int, err error) {
+	if printPrintError && err != nil {
+		fmt.Printf("Print Error %d: %v\n", n, err)
+	}
+}
+func FprintOKResponse(printPrintError bool, writer http.ResponseWriter, textType string, a ...any) {
+	FprintResponse(printPrintError, writer, WriteHeaderContentTextOK(textType), a...)
 }
 
-func FprintfOKResponse(writer http.ResponseWriter, textType string, format string, a ...any) {
-	FprintfResponse(writer, WriteHeaderContentTextOK(textType), format, a...)
+func FprintfOKResponse(printPrintError bool, writer http.ResponseWriter, textType string, format string, a ...any) {
+	FprintfResponse(printPrintError, writer, WriteHeaderContentTextOK(textType), format, a...)
 }
 
-func FprintResponse(writer http.ResponseWriter, writeHeader func(http.ResponseWriter), a ...any) {
+func FprintResponse(printPrintError bool, writer http.ResponseWriter, writeHeader func(http.ResponseWriter), a ...any) {
 	writeHeader(writer)
-	fmt.Fprint(writer, a...)
+	n, err := fmt.Fprint(writer, a...)
+	PrintPrintError(printPrintError, n, err)
 }
 
-func FprintfResponse(writer http.ResponseWriter, writeHeader func(http.ResponseWriter), format string, a ...any) {
+func FprintfResponse(printPrintError bool, writer http.ResponseWriter, writeHeader func(http.ResponseWriter), format string, a ...any) {
 	writeHeader(writer)
-	fmt.Fprintf(writer, format, a...)
+	n, err := fmt.Fprintf(writer, format, a...)
+	PrintPrintError(printPrintError, n, err)
 }

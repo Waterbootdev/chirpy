@@ -8,7 +8,7 @@ import (
 )
 
 func healthzHandler(writer http.ResponseWriter, request *http.Request) {
-	response.FprintOKResponse(writer, response.PLAIN, "OK")
+	response.FprintOKResponse(apiconfig.PRINTERROR, writer, response.PLAIN, "OK")
 }
 
 func main() {
