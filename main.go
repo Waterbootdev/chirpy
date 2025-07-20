@@ -3,11 +3,11 @@ package main
 import (
 	"net/http"
 
-	. "github.com/Waterbootdev/chirpy/internal/response"
+	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
 func healthzHandler(writer http.ResponseWriter, request *http.Request) {
-	FprintResponse(writer, WriteHeaderContentTextOK(PLAIN), "OK")
+	response.FprintOKResponse(writer, response.PLAIN, "OK")
 }
 
 func main() {

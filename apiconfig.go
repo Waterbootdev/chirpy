@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"sync/atomic"
 
-	. "github.com/Waterbootdev/chirpy/internal/response"
+	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
 type apiConfig struct {
 	fileserverHits atomic.Int32
 }
 
-func (cfg *apiConfig) resetHandle(writer http.ResponseWriter, request *http.Request) {
+func (cfg *apiConfig) resetHandle(writer http.ResponseWriter, _ *http.Request) {
 	cfg.fileserverHits.Store(0)
-	FprintResponse(writer, WriteHeaderContentTextOK(PLAIN), "Hits reset")
+	response.FprintOKResponse(writer, response.PLAIN, "Hits reset")
 }
 
 const METRICSFORMAT = `<html>
@@ -23,8 +23,8 @@ const METRICSFORMAT = `<html>
   </body>
 </html>`
 
-func (cfg *apiConfig) metricsHandler(writer http.ResponseWriter, request *http.Request) {
-	FprintfResponse(writer, WriteHeaderContentTextOK(HTML), METRICSFORMAT, cfg.fileserverHits.Load())
+func (cfg *apiConfig) metricsHandler(writer http.ResponseWriter, _ *http.Request) {
+	response.FprintfOKResponse(writer, response.HTML, METRICSFORMAT, cfg.fileserverHits.Load())
 }
 
 func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
