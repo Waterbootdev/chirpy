@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/Waterbootdev/chirpy/internal/apiconfig"
 	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
@@ -11,7 +12,7 @@ func healthzHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
-	apiCfg := apiConfig{}
+	apiCfg := apiconfig.ApiConfig{}
 
 	serveMux := http.NewServeMux()
 
@@ -20,14 +21,14 @@ func main() {
 		Handler: serveMux,
 	}
 
-	httpFileServer := apiCfg.middlewareMetricsInc(http.StripPrefix("/app/", http.FileServer(http.Dir("."))))
+	httpFileServer := apiCfg.MiddlewareMetricsInc(http.StripPrefix("/app/", http.FileServer(http.Dir("."))))
 
 	serveMux.Handle("/app/", httpFileServer)
 	serveMux.Handle("/app/assets", httpFileServer)
 
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
-	serveMux.HandleFunc("GET /admin/metrics", apiCfg.metricsHandler)
-	serveMux.HandleFunc("POST /admin/reset", apiCfg.resetHandle)
+	serveMux.HandleFunc("GET /admin/metrics", apiCfg.MetricsHandler)
+	serveMux.HandleFunc("POST /admin/reset", apiCfg.ResetHandle)
 
 	httpServer.ListenAndServe()
 }
