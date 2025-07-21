@@ -3,11 +3,16 @@ package main
 import (
 	"net/http"
 
+	_ "github.com/lib/pq"
+
 	"github.com/Waterbootdev/chirpy/internal/apiconfig"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	apiCfg := apiconfig.ApiConfig{}
+	godotenv.Load()
+
+	apiCfg := apiconfig.NewApiConfig()
 
 	serveMux := http.NewServeMux()
 
