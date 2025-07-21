@@ -12,8 +12,8 @@ func healthzHandler(writer http.ResponseWriter, request *http.Request) {
 	response.FprintOKResponse(apiconfig.PRINTERROR, writer, response.PLAIN, "OK")
 }
 
-func chirpErrorResponse(writer http.ResponseWriter, statusCode int, currentChirpError string) {
-	data, err := json.Marshal(chirpError{Error: currentChirpError})
+func chirpJsonResponse(writer http.ResponseWriter, statusCode int, v interface{}) {
+	data, err := json.Marshal(v)
 	if err != nil {
 		response.InternalServerErrorResponse(writer, err)
 		return
@@ -21,14 +21,11 @@ func chirpErrorResponse(writer http.ResponseWriter, statusCode int, currentChirp
 	response.JsonResponse(writer, statusCode, data)
 }
 
+func chirpErrorResponse(writer http.ResponseWriter, statusCode int, currentChirpError string) {
+	chirpJsonResponse(writer, statusCode, chirpError{Error: currentChirpError})
+}
 func chirpCleanedResponse(writer http.ResponseWriter, cleanedBody string) {
-	data, err := json.Marshal(cleanedChirp{CleanedBody: cleanedBody})
-
-	if err != nil {
-		response.InternalServerErrorResponse(writer, err)
-		return
-	}
-	response.JsonResponse(writer, http.StatusOK, data)
+	chirpJsonResponse(writer, http.StatusOK, cleanedChirp{CleanedBody: cleanedBody})
 }
 
 func validateChirpLength(writer http.ResponseWriter, request *http.Request) {
@@ -45,5 +42,5 @@ func validateChirpLength(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	chirpCleanedResponse(writer, getCleanChirp(chirp.Body, ProfaneWords()))
+	chirpCleanedResponse(writer, cleanProfaneWords(chirp.Body, currentProfaneWords()))
 }
