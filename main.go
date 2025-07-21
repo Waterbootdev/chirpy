@@ -4,12 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Waterbootdev/chirpy/internal/apiconfig"
-	"github.com/Waterbootdev/chirpy/internal/response"
 )
-
-func healthzHandler(writer http.ResponseWriter, request *http.Request) {
-	response.FprintOKResponse(apiconfig.PRINTERROR, writer, response.PLAIN, "OK")
-}
 
 func main() {
 	apiCfg := apiconfig.ApiConfig{}
@@ -29,6 +24,7 @@ func main() {
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
 	serveMux.HandleFunc("GET /admin/metrics", apiCfg.MetricsHandler)
 	serveMux.HandleFunc("POST /admin/reset", apiCfg.ResetHandle)
+	serveMux.HandleFunc("POST /api/validate_chirp", validateChirpLength)
 
 	httpServer.ListenAndServe()
 }
