@@ -1,5 +1,5 @@
 package chirp
 
-func CurrentProfaneWords() []string {
+func currentProfaneWords() []string {
 	return []string{"kerfuffle", "sharbert", "fornax"}
 }
