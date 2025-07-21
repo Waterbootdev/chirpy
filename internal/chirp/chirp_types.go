@@ -1,8 +1,6 @@
-package main
+package chirp
 
-const MAX_CHIRP_LENGTH int = 140
-
-type chirp struct {
+type Chirp struct {
 	Body string `json:"body"`
 }
 

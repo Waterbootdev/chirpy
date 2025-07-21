@@ -1,17 +1,15 @@
-package main
+package chirp
 
 import (
 	"slices"
 	"strings"
 )
 
+const MAX_CHIRP_LENGTH int = 140
+
 const PROFANE_MASK string = "****"
 
-func currentProfaneWords() []string {
-	return []string{"kerfuffle", "sharbert", "fornax"}
-}
-
-func (c chirp) cleanProfaneWords(profaneWords []string) string {
+func (c Chirp) CleanProfaneWords(profaneWords []string) string {
 
 	words := strings.Split(c.Body, " ")
 
@@ -22,4 +20,8 @@ func (c chirp) cleanProfaneWords(profaneWords []string) string {
 	}
 
 	return strings.Join(words, " ")
+}
+
+func (c Chirp) IsToLong() bool {
+	return len(c.Body) > MAX_CHIRP_LENGTH
 }
