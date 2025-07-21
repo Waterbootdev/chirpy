@@ -30,7 +30,7 @@ func chirpCleanedResponse(writer http.ResponseWriter, cleanedBody string) {
 
 func validateChirpLength(writer http.ResponseWriter, request *http.Request) {
 
-	chirp, err := getChirp(request)
+	chirp, err := chirpFromRequest(request)
 
 	if err != nil {
 		chirpErrorResponse(writer, http.StatusInternalServerError, "Something went wrong")
@@ -42,5 +42,5 @@ func validateChirpLength(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	chirpCleanedResponse(writer, cleanProfaneWords(chirp.Body, currentProfaneWords()))
+	chirpCleanedResponse(writer, chirp.cleanProfaneWords(currentProfaneWords()))
 }

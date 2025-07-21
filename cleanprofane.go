@@ -11,9 +11,9 @@ func currentProfaneWords() []string {
 	return []string{"kerfuffle", "sharbert", "fornax"}
 }
 
-func cleanProfaneWords(body string, profaneWords []string) string {
+func (c chirp) cleanProfaneWords(profaneWords []string) string {
 
-	words := strings.Split(body, " ")
+	words := strings.Split(c.Body, " ")
 
 	for i, word := range words {
 		if slices.Contains(profaneWords, strings.ToLower(word)) {

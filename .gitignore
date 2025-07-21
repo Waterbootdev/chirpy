@@ -13,6 +13,7 @@
 
 # go build output
 out
+chirpy
 
 # Code coverage profiles and other test artifacts
 *.out

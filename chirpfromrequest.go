@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func getChirp(request *http.Request) (chirp chirp, err error) {
+func chirpFromRequest(request *http.Request) (chirp chirp, err error) {
 	decoder := json.NewDecoder(request.Body)
 	err = decoder.Decode(&chirp)
 	return chirp, err
