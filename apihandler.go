@@ -21,15 +21,6 @@ func chirpErrorResponse(writer http.ResponseWriter, statusCode int, currentChirp
 	response.JsonResponse(writer, statusCode, data)
 }
 
-func chirpValidResponse(writer http.ResponseWriter) {
-	data, err := json.Marshal(validChirp{Valid: true})
-
-	if err != nil {
-		response.InternalServerErrorResponse(writer, err)
-		return
-	}
-	response.JsonResponse(writer, http.StatusOK, data)
-}
 func chirpCleanedResponse(writer http.ResponseWriter, cleanedBody string) {
 	data, err := json.Marshal(cleanedChirp{CleanedBody: cleanedBody})
 
@@ -54,7 +45,5 @@ func validateChirpLength(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	chirpValidResponse(writer)
-	// cleanedChirp := getCleanChirp(chirp.Body, ProfaneWords())
-	// chirpCleanedResponse(writer, cleanedChirp)
+	chirpCleanedResponse(writer, getCleanChirp(chirp.Body, ProfaneWords()))
 }
