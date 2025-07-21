@@ -20,12 +20,11 @@ func setFileServerHandle(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 func setAdminHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 	serveMux.HandleFunc("GET /admin/metrics", apiCfg.MetricsHandler)
 	serveMux.HandleFunc("POST /admin/reset", apiCfg.ResetHandle)
-
 }
 
 func setApiHandleFuncs(serveMux *http.ServeMux) {
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
-	serveMux.HandleFunc("POST /api/validate_chirp", validateChirpLengthAndCleanProfaneWords)
+	serveMux.HandleFunc("POST /api/validate_and_clean_chirp", validateChirpLengthAndCleanProfaneWords)
 }
 
 func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
@@ -36,7 +35,7 @@ func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
 	return serveMux
 }
 
-func httpServer(apiCfg *apiconfig.ApiConfig) (httpServer *http.Server) {
+func newHttpServer(apiCfg *apiconfig.ApiConfig) *http.Server {
 	return &http.Server{
 		Addr:    ":8080",
 		Handler: newServeMux(apiCfg),
@@ -46,5 +45,5 @@ func httpServer(apiCfg *apiconfig.ApiConfig) (httpServer *http.Server) {
 func main() {
 	godotenv.Load()
 
-	httpServer(apiconfig.NewApiConfig()).ListenAndServe()
+	newHttpServer(apiconfig.NewApiConfig()).ListenAndServe()
 }
