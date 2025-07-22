@@ -63,12 +63,12 @@ func (q *Queries) DeleteChirps(ctx context.Context, userID uuid.UUID) error {
 
 const getChirp = `-- name: GetChirp :many
 SELECT id, created_at, updated_at, body, user_id FROM chirps
-WHERE user_id = $1
+WHERE id = $1
 ORDER BY created_at ASC
 `
 
-func (q *Queries) GetChirp(ctx context.Context, userID uuid.UUID) ([]Chirp, error) {
-	rows, err := q.db.QueryContext(ctx, getChirp, userID)
+func (q *Queries) GetChirp(ctx context.Context, id uuid.UUID) ([]Chirp, error) {
+	rows, err := q.db.QueryContext(ctx, getChirp, id)
 	if err != nil {
 		return nil, err
 	}
