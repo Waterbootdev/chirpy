@@ -1,7 +1,6 @@
 package apiconfig
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -12,7 +11,7 @@ import (
 
 const PRINTERROR bool = true
 
-func (cfg *ApiConfig) ResetHandle(writer http.ResponseWriter, _ *http.Request) {
+func (cfg *ApiConfig) ResetHandle(writer http.ResponseWriter, request *http.Request) {
 
 	if cfg.platform != "dev" {
 		response.ErrorResponse(writer, http.StatusForbidden, "Forbidden")
@@ -22,7 +21,7 @@ func (cfg *ApiConfig) ResetHandle(writer http.ResponseWriter, _ *http.Request) {
 	cfg.fileserverHits.Store(0)
 	response.FprintOKResponse(PRINTERROR, writer, response.PLAIN, "Hits reset")
 
-	if err := cfg.queries.DeleteUsers(context.Background()); err != nil {
+	if err := cfg.queries.DeleteUsers(request.Context()); err != nil {
 		response.InternalServerErrorResponse(writer, err)
 	}
 }
@@ -40,26 +39,21 @@ func (cfg *ApiConfig) MiddlewareMetricsInc(next http.Handler) http.Handler {
 
 func (cfg *ApiConfig) CreateUser(request *http.Request, email *email) (*database.Chirpy, error) {
 	timeNow := time.Now()
-
-	c, err := cfg.queries.CreateUser(context.Background(), database.CreateUserParams{
+	c, err := cfg.queries.CreateUser(request.Context(), database.CreateUserParams{
 		ID:        uuid.New(),
 		CreatedAt: timeNow,
 		UpdatedAt: timeNow,
 		Email:     email.Email,
 	})
-
 	return &c, err
 }
+
 func (cfg *ApiConfig) CreateUserErrorResponse(writer http.ResponseWriter, request *http.Request, email *email) (*user, bool) {
-
 	chirpy, err := cfg.CreateUser(request, email)
-
 	wasError := err != nil
-
 	if wasError {
 		response.InternalServerErrorResponse(writer, err)
 	}
-
 	return fromChirpy(chirpy), !wasError
 }
 
@@ -67,7 +61,6 @@ func (cfg *ApiConfig) CreateUserFromRequest(writer http.ResponseWriter, request 
 	if emailFromRequest, ok := response.FromRequestErrorResponse[email](writer, request); ok {
 		return cfg.CreateUserErrorResponse(writer, request, emailFromRequest)
 	} else {
-
 		return nil, ok
 	}
 }
