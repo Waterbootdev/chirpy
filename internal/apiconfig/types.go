@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type email struct {
+type userRequest struct {
 	Email string `json:"email"`
 }
 
-func (e email) IsValidResponse(writer http.ResponseWriter) bool {
+func (e userRequest) IsValidResponse(writer http.ResponseWriter) bool {
 	return true
 }
 
