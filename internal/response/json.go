@@ -2,7 +2,6 @@ package response
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -32,7 +31,6 @@ func ErrorResponse(writer http.ResponseWriter, statusCode int, currentResponseEr
 func FromRequestErrorResponse[T any](writer http.ResponseWriter, request *http.Request) (t *T, wasError bool) {
 	decoder := json.NewDecoder(request.Body)
 	wasError = decoder.Decode(&t) != nil
-	fmt.Print(wasError, t)
 	if wasError {
 		ErrorResponse(writer, http.StatusInternalServerError, "Something went wrong")
 	}
