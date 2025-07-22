@@ -1,7 +1,6 @@
 package apiconfig
 
 import (
-	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -65,8 +64,6 @@ func (c chirpRequest) IsValidResponse(writer http.ResponseWriter) bool {
 	if valid {
 		c.cleanProfaneWords(currentProfaneWords())
 	}
-
-	fmt.Println(c.Body)
 
 	return valid
 }

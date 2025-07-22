@@ -26,6 +26,7 @@ func setApiHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
 	serveMux.HandleFunc("POST /api/chirps", apiCfg.CreateChirpHandle)
 	serveMux.HandleFunc("POST /api/users", apiCfg.CreateUserHandle)
+	serveMux.HandleFunc("GET /api/chirps", apiCfg.GetChirpsHandle)
 }
 func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
 	serveMux := http.NewServeMux()

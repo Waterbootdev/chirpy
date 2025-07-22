@@ -40,3 +40,14 @@ func (cfg *ApiConfig) CreateUserHandle(writer http.ResponseWriter, request *http
 func (cfg *ApiConfig) CreateChirpHandle(writer http.ResponseWriter, request *http.Request) {
 	CreateHandle(cfg, writer, request, cfg.CreateChirp)
 }
+
+func (cfg *ApiConfig) GetChirpsHandle(writer http.ResponseWriter, request *http.Request) {
+	chirps, err := cfg.queries.GetChirps(request.Context())
+
+	if err != nil {
+		response.InternalServerErrorResponse(writer, err)
+		return
+	}
+
+	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirps(chirps))
+}

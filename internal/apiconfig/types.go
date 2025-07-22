@@ -54,3 +54,11 @@ func fromDatabaseChirp(dbChirp *database.Chirp) *chirp {
 		UserID:    dbChirp.UserID,
 	}
 }
+
+func fromDatabaseChirps(dbChirp []database.Chirp) []chirp {
+	chirps := make([]chirp, len(dbChirp))
+	for i, dbChirp := range dbChirp {
+		chirps[i] = *fromDatabaseChirp(&dbChirp)
+	}
+	return chirps
+}
