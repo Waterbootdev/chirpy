@@ -13,7 +13,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO chirpy (id, created_at, updated_at, email)
+INSERT INTO users (id, created_at, updated_at, email)
 VALUES (    
     $1, 
     $2, 
@@ -30,14 +30,14 @@ type CreateUserParams struct {
 	Email     string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Chirpy, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.Email,
 	)
-	var i Chirpy
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
@@ -48,7 +48,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Chirpy,
 }
 
 const deleteUsers = `-- name: DeleteUsers :exec
-DELETE FROM chirpy
+DELETE FROM users
 `
 
 func (q *Queries) DeleteUsers(ctx context.Context) error {

@@ -37,7 +37,7 @@ func (cfg *ApiConfig) MiddlewareMetricsInc(next http.Handler) http.Handler {
 	})
 }
 
-func (cfg *ApiConfig) CreateUser(request *http.Request, email *email) (*database.Chirpy, error) {
+func (cfg *ApiConfig) CreateUser(request *http.Request, email *email) (*database.User, error) {
 	timeNow := time.Now()
 	c, err := cfg.queries.CreateUser(request.Context(), database.CreateUserParams{
 		ID:        uuid.New(),
@@ -54,7 +54,7 @@ func (cfg *ApiConfig) CreateUserErrorResponse(writer http.ResponseWriter, reques
 	if wasError {
 		response.InternalServerErrorResponse(writer, err)
 	}
-	return fromChirpy(chirpy), !wasError
+	return fromDatabase(chirpy), !wasError
 }
 
 func (cfg *ApiConfig) CreateUserFromRequest(writer http.ResponseWriter, request *http.Request) (*user, bool) {

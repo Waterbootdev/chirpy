@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-INSERT INTO chirpy (id, created_at, updated_at, email)
+INSERT INTO users (id, created_at, updated_at, email)
 VALUES (    
     $1, 
     $2, 
@@ -11,4 +11,4 @@ RETURNING *;
 
 
 -- name: DeleteUsers :exec
-DELETE FROM chirpy; 
+DELETE FROM users; 

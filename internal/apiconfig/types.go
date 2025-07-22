@@ -18,11 +18,11 @@ type user struct {
 	Email     string    `json:"email"`
 }
 
-func fromChirpy(chirpy *database.Chirpy) *user {
+func fromDatabase(dbUser *database.User) *user {
 	return &user{
-		ID:        chirpy.ID,
-		CreatedAt: chirpy.CreatedAt,
-		UpdatedAt: chirpy.UpdatedAt,
-		Email:     chirpy.Email,
+		ID:        dbUser.ID,
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		Email:     dbUser.Email,
 	}
 }
