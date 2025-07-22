@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+
+	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
 const MAX_CHIRP_LENGTH int = 140
@@ -35,7 +37,7 @@ func (c Chirp) isToLongErrorResponse(writer http.ResponseWriter) bool {
 	toLong := c.isToLong()
 
 	if toLong {
-		errorResponse(writer, http.StatusBadRequest, "Chirp is too long")
+		response.ErrorResponse(writer, http.StatusBadRequest, "Chirp is too long")
 	}
 
 	return toLong

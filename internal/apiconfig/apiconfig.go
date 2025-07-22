@@ -1,6 +1,7 @@
 package apiconfig
 
 import (
+	"os"
 	"sync/atomic"
 
 	"github.com/Waterbootdev/chirpy/internal/database"
@@ -9,12 +10,14 @@ import (
 type ApiConfig struct {
 	fileserverHits atomic.Int32
 	queries        *database.Queries
+	platform       string
 }
 
 func NewApiConfig() *ApiConfig {
 	return &ApiConfig{
 		fileserverHits: atomic.Int32{},
 		queries:        database.GetDatabaseQueries(),
+		platform:       os.Getenv("PLATFORM"),
 	}
 }
 

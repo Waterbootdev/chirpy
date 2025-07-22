@@ -46,3 +46,12 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Chirpy,
 	)
 	return i, err
 }
+
+const deleteUsers = `-- name: DeleteUsers :exec
+DELETE FROM chirpy
+`
+
+func (q *Queries) DeleteUsers(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteUsers)
+	return err
+}
