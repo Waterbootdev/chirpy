@@ -61,6 +61,7 @@ func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
 	handler(cfg, writer, request, cfg.createUserHandle, allways[userRequest], http.StatusCreated)
 }
+
 func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
 	handler(cfg, writer, request, cfg.createChirpHandle, chirpRequestValidator, http.StatusCreated)
 }

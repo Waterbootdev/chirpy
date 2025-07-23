@@ -6,9 +6,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/google/uuid"
-
 	"github.com/Waterbootdev/chirpy/internal/response"
+	"github.com/google/uuid"
 )
 
 type chirpRequest struct {
@@ -47,17 +46,21 @@ func (r *chirpRequest) isToLongErrorResponse(writer http.ResponseWriter) bool {
 	return toLong
 }
 
-func currentProfaneWords() []string {
-	return []string{"kerfuffle", "sharbert", "fornax"}
+func (cfg *ApiConfig) validateJWTResponse(request *http.Request, writer http.ResponseWriter) (uuid.UUID, bool) {
+	userID, err := cfg.validateJWT(request)
+	ok := err == nil
+	if !ok {
+		response.ErrorResponse(writer, http.StatusUnauthorized, "Unauthorized")
+	}
+	return userID, ok
 }
 
-func chirpRequestValidator(_ *ApiConfig, writer http.ResponseWriter, chirpRequest *chirpRequest) bool {
+func chirpRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, chirpRequest *chirpRequest) bool {
 
-	valid := !chirpRequest.isToLongErrorResponse(writer)
-
-	if valid {
-		chirpRequest.cleanProfaneWords(currentProfaneWords())
+	if userID, ok := cfg.validateJWTResponse(request, writer); ok {
+		chirpRequest.UserID = userID
+		return !chirpRequest.isToLongErrorResponse(writer)
+	} else {
+		return ok
 	}
-
-	return valid
 }

@@ -1,16 +1,40 @@
 package apiconfig
 
 import (
+	"net/http"
 	"os"
 	"sync/atomic"
+	"time"
 
+	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/google/uuid"
 )
 
 type ApiConfig struct {
 	fileserverHits atomic.Int32
 	queries        *database.Queries
 	platform       string
+	secret         string
+}
+
+func (cfg *ApiConfig) validateJWT(request *http.Request) (uuid.UUID, error) {
+	bearerToken, err := auth.GetBearerToken(request.Header)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return auth.ValidateJWT(bearerToken, cfg.secret)
+}
+
+func expirationTime(userDuration int) time.Duration {
+	if userDuration == 0 {
+		return time.Hour
+	}
+	return time.Duration(userDuration) * time.Second
+}
+
+func (cfg *ApiConfig) makeJWT(userDuration int, userID uuid.UUID) (string, error) {
+	return auth.MakeJWT(userID, cfg.secret, expirationTime(userDuration))
 }
 
 func NewApiConfig() *ApiConfig {
@@ -18,6 +42,7 @@ func NewApiConfig() *ApiConfig {
 		fileserverHits: atomic.Int32{},
 		queries:        database.GetDatabaseQueries(),
 		platform:       os.Getenv("PLATFORM"),
+		secret:         os.Getenv("SECRET"),
 	}
 }
 

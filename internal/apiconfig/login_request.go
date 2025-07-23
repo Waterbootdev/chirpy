@@ -5,17 +5,18 @@ import (
 	"net/http"
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
+	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
-	"github.com/google/uuid"
 )
 
 type loginRequest struct {
-	Password string    `json:"password"`
-	Email    string    `json:"email"`
-	ID       uuid.UUID `json:"id"`
+	Password         string         `json:"password"`
+	Email            string         `json:"email"`
+	ExpiresInSeconds int            `json:"expires_in_seconds"`
+	User             *database.User `json:"user"`
 }
 
-func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, loginRequest *loginRequest) (ok bool) {
+func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) (ok bool) {
 
 	user, err := cfg.queries.GetUserByEmail(context.Background(), loginRequest.Email)
 
@@ -31,7 +32,7 @@ func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, loginRequ
 		return ok
 	}
 
-	loginRequest.ID = user.ID
+	loginRequest.User = &user
 
 	return ok
 }

@@ -4,13 +4,13 @@ import (
 	"net/http"
 )
 
-func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequest) (*user, error) {
+func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequest) (*userToken, error) {
 
-	user, err := cfg.queries.GetUser(request.Context(), loginRequest.ID)
+	token, err := cfg.makeJWT(loginRequest.ExpiresInSeconds, loginRequest.User.ID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return fromDatabaseUser(&user), nil
+	return fromDatabaseUserToken(loginRequest.User, token), nil
 }

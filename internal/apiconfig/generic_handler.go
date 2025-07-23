@@ -15,18 +15,20 @@ func handleErrorResponse[T, U any](writer http.ResponseWriter, request *http.Req
 	return u, !wasError
 }
 
-func handelFromRequest[T, U any](cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, handle func(request *http.Request, t *T) (*U, error), requestValidator func(cfg *ApiConfig, writer http.ResponseWriter, t *T) bool) (*U, bool) {
-	if t, ok := response.FromRequestErrorResponse[T](writer, request); ok && requestValidator(cfg, writer, t) {
+func handelFromRequest[T, U any](cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, handle func(request *http.Request, t *T) (*U, error), requestValidator func(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, t *T) bool) (*U, bool) {
+	if t, ok := response.FromRequestErrorResponse[T](writer, request); ok && requestValidator(cfg, writer, request, t) {
 		return handleErrorResponse(writer, request, t, handle)
 	} else {
 		return nil, false
 	}
 }
 
-func handler[T, U any](cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), requestValidator func(cfg *ApiConfig, writer http.ResponseWriter, t *T) bool, statusCode int) {
+func handler[T, U any](cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), requestValidator func(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, t *T) bool, statusCode int) {
 	if u, ok := handelFromRequest(cfg, writer, request, handel, requestValidator); ok {
 		response.ResponseJsonMarshal(writer, statusCode, u)
 	}
 }
 
-func allways[T any](cfg *ApiConfig, writer http.ResponseWriter, t *T) bool { return true }
+func allways[T any](cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, t *T) bool {
+	return true
+}
