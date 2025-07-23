@@ -9,7 +9,7 @@ import (
 
 const PRINTERROR bool = true
 
-func (cfg *ApiConfig) ResetHandle(writer http.ResponseWriter, request *http.Request) {
+func (cfg *ApiConfig) ResetHandler(writer http.ResponseWriter, request *http.Request) {
 
 	if cfg.platform != "dev" {
 		response.ErrorResponse(writer, http.StatusForbidden, "Forbidden")
@@ -24,7 +24,7 @@ func (cfg *ApiConfig) ResetHandle(writer http.ResponseWriter, request *http.Requ
 	}
 }
 
-func (cfg *ApiConfig) MetricsHandle(writer http.ResponseWriter, _ *http.Request) {
+func (cfg *ApiConfig) MetricsHandler(writer http.ResponseWriter, _ *http.Request) {
 	response.FprintfOKResponse(PRINTERROR, writer, response.HTML, METRICSFORMAT, cfg.fileserverHits.Load())
 }
 
@@ -35,14 +35,7 @@ func (cfg *ApiConfig) MiddlewareMetricsInc(next http.Handler) http.Handler {
 	})
 }
 
-func (cfg *ApiConfig) CreateUserHandle(writer http.ResponseWriter, request *http.Request) {
-	CreateHandle(cfg, writer, request, cfg.CreateUser)
-}
-func (cfg *ApiConfig) CreateChirpHandle(writer http.ResponseWriter, request *http.Request) {
-	CreateHandle(cfg, writer, request, cfg.CreateChirp)
-}
-
-func (cfg *ApiConfig) GetChirpsHandle(writer http.ResponseWriter, request *http.Request) {
+func (cfg *ApiConfig) GetChirpsHandler(writer http.ResponseWriter, request *http.Request) {
 	chirps, err := cfg.queries.GetChirps(request.Context())
 
 	if err != nil {
@@ -53,19 +46,25 @@ func (cfg *ApiConfig) GetChirpsHandle(writer http.ResponseWriter, request *http.
 	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirps(chirps))
 }
 
-func (cfg *ApiConfig) GetChirpHandle(writer http.ResponseWriter, request *http.Request) {
+func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.Request) {
 	id := uuid.MustParse(request.PathValue("chirpID"))
-	chirps, err := cfg.queries.GetChirp(request.Context(), id)
+	chirp, err := cfg.queries.GetChirp(request.Context(), id)
 
 	if err != nil {
-		response.InternalServerErrorResponse(writer, err)
-		return
-	}
-
-	if len(chirps) == 0 {
 		response.ErrorResponse(writer, http.StatusNotFound, "Chirp not found")
 		return
 	}
 
-	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirps(chirps))
+	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirp(&chirp))
+}
+
+func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
+	handler(cfg, writer, request, cfg.createUserHandle, http.StatusCreated)
+}
+func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
+	handler(cfg, writer, request, cfg.createChirpHandle, http.StatusCreated)
+}
+
+func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
+	handler(cfg, writer, request, cfg.loginHandle, http.StatusOK)
 }

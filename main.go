@@ -18,16 +18,18 @@ func setFileServerHandle(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 }
 
 func setAdminHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
-	serveMux.HandleFunc("GET /admin/metrics", apiCfg.MetricsHandle)
-	serveMux.HandleFunc("POST /admin/reset", apiCfg.ResetHandle)
+	serveMux.HandleFunc("GET /admin/metrics", apiCfg.MetricsHandler)
+	serveMux.HandleFunc("POST /admin/reset", apiCfg.ResetHandler)
 }
 
 func setApiHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 	serveMux.HandleFunc("GET /api/healthz", healthzHandler)
-	serveMux.HandleFunc("POST /api/chirps", apiCfg.CreateChirpHandle)
-	serveMux.HandleFunc("POST /api/users", apiCfg.CreateUserHandle)
-	serveMux.HandleFunc("GET /api/chirps", apiCfg.GetChirpsHandle)
-	serveMux.HandleFunc("GET /api/chirps/{chirpID}", apiCfg.GetChirpHandle)
+	serveMux.HandleFunc("POST /api/chirps", apiCfg.CreateChirpHandler)
+	serveMux.HandleFunc("POST /api/users", apiCfg.CreateUserHandler)
+	serveMux.HandleFunc("GET /api/chirps", apiCfg.GetChirpsHandler)
+	serveMux.HandleFunc("GET /api/chirps/{chirpID}", apiCfg.GetChirpHandler)
+	serveMux.HandleFunc("POST /api/login", apiCfg.LoginHandler)
+
 }
 func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
 	serveMux := http.NewServeMux()
