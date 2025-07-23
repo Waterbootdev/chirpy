@@ -8,19 +8,21 @@ import (
 )
 
 type userToken struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Email     string    `json:"email"`
-	Token     string    `json:"token"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Email        string    `json:"email"`
+	Token        string    `json:"token"`
+	RefreshToken string    `json:"refresh_token"`
 }
 
-func fromDatabaseUserToken(dbUser *database.User, token string) *userToken {
+func fromDatabaseUserToken(loginRequest *loginRequest, refreshToken *database.RefreshToken, accesToken string) *userToken {
 	return &userToken{
-		ID:        dbUser.ID,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		Email:     dbUser.Email,
-		Token:     token,
+		ID:           loginRequest.User.ID,
+		CreatedAt:    refreshToken.CreatedAt,
+		UpdatedAt:    refreshToken.UpdatedAt,
+		Email:        loginRequest.Email,
+		Token:        accesToken,
+		RefreshToken: refreshToken.Token,
 	}
 }

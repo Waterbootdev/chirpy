@@ -26,15 +26,8 @@ func (cfg *ApiConfig) validateJWT(request *http.Request) (uuid.UUID, error) {
 	return auth.ValidateJWT(bearerToken, cfg.secret)
 }
 
-func expirationTime(userDuration int) time.Duration {
-	if userDuration == 0 {
-		return time.Hour
-	}
-	return time.Duration(userDuration) * time.Second
-}
-
-func (cfg *ApiConfig) makeJWT(userDuration int, userID uuid.UUID) (string, error) {
-	return auth.MakeJWT(userID, cfg.secret, expirationTime(userDuration))
+func (cfg *ApiConfig) makeJWT(userID uuid.UUID) (string, error) {
+	return auth.MakeJWT(userID, cfg.secret, time.Hour)
 }
 
 func NewApiConfig() *ApiConfig {

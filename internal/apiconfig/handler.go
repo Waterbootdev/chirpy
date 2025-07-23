@@ -69,3 +69,11 @@ func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *ht
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	handler(cfg, writer, request, cfg.loginHandle, loginRequestValidator, http.StatusOK)
 }
+
+func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
+	panic("not implemented")
+}
+
+func (cfg *ApiConfig) RevokeHandler(writer http.ResponseWriter, request *http.Request) {
+	panic("not implemented")
+}

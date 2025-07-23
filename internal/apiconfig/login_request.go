@@ -10,10 +10,9 @@ import (
 )
 
 type loginRequest struct {
-	Password         string         `json:"password"`
-	Email            string         `json:"email"`
-	ExpiresInSeconds int            `json:"expires_in_seconds"`
-	User             *database.User `json:"user"`
+	Password string         `json:"password"`
+	Email    string         `json:"email"`
+	User     *database.User `json:"user"`
 }
 
 func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) (ok bool) {
