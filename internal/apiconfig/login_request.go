@@ -15,24 +15,23 @@ type loginRequest struct {
 	ID       uuid.UUID `json:"id"`
 }
 
-func (lr loginRequest) IsValidResponse(cfg *ApiConfig, writer http.ResponseWriter) (lrp *loginRequest, ok bool) {
-	lrp = &lr
+func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, loginRequest *loginRequest) (ok bool) {
 
-	user, err := cfg.queries.GetUserByEmail(context.Background(), lr.Email)
-
-	if ok = err == nil; !ok {
-		response.ErrorResponse(writer, http.StatusUnauthorized, "Incorrect email or password")
-		return lrp, ok
-	}
-
-	err = auth.CheckPasswordHash(lr.Password, user.PasswordHash)
+	user, err := cfg.queries.GetUserByEmail(context.Background(), loginRequest.Email)
 
 	if ok = err == nil; !ok {
 		response.ErrorResponse(writer, http.StatusUnauthorized, "Incorrect email or password")
-		return lrp, ok
+		return ok
 	}
 
-	lr.ID = user.ID
+	err = auth.CheckPasswordHash(loginRequest.Password, user.PasswordHash)
 
-	return lrp, ok
+	if ok = err == nil; !ok {
+		response.ErrorResponse(writer, http.StatusUnauthorized, "Incorrect email or password")
+		return ok
+	}
+
+	loginRequest.ID = user.ID
+
+	return ok
 }

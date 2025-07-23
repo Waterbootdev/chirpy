@@ -51,13 +51,13 @@ func currentProfaneWords() []string {
 	return []string{"kerfuffle", "sharbert", "fornax"}
 }
 
-func (r chirpRequest) IsValidResponse(_ *ApiConfig, writer http.ResponseWriter) (*chirpRequest, bool) {
+func chirpRequestValidator(_ *ApiConfig, writer http.ResponseWriter, chirpRequest *chirpRequest) bool {
 
-	valid := !r.isToLongErrorResponse(writer)
+	valid := !chirpRequest.isToLongErrorResponse(writer)
 
 	if valid {
-		r.cleanProfaneWords(currentProfaneWords())
+		chirpRequest.cleanProfaneWords(currentProfaneWords())
 	}
 
-	return &r, valid
+	return valid
 }

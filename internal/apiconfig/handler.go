@@ -59,12 +59,12 @@ func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.
 }
 
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.createUserHandle, http.StatusCreated)
+	handler(cfg, writer, request, cfg.createUserHandle, allways[userRequest], http.StatusCreated)
 }
 func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.createChirpHandle, http.StatusCreated)
+	handler(cfg, writer, request, cfg.createChirpHandle, chirpRequestValidator, http.StatusCreated)
 }
 
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.loginHandle, http.StatusOK)
+	handler(cfg, writer, request, cfg.loginHandle, loginRequestValidator, http.StatusOK)
 }
