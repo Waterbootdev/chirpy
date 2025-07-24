@@ -1,12 +1,16 @@
 package apiconfig
 
-import "github.com/Waterbootdev/chirpy/internal/database"
+import (
+	"net/http"
+
+	"github.com/Waterbootdev/chirpy/internal/database"
+)
 
 type accesToken struct {
 	Token string `json:"token"`
 }
 
-func (cfg *ApiConfig) refreshHandler(refreshToken *database.RefreshToken) (*accesToken, error) {
+func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.RefreshToken) (*accesToken, error) {
 
 	token, err := cfg.makeJWT(refreshToken.UserID)
 

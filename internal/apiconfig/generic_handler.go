@@ -33,18 +33,9 @@ func allways[T any](writer http.ResponseWriter, request *http.Request, t *T) boo
 	return true
 }
 
-func headerHandleErrorResponse[T, U any](writer http.ResponseWriter, t *T, handle func(t *T) (*U, error)) (*U, bool) {
-	u, err := handle(t)
-	wasError := err != nil
-	if wasError {
-		response.InternalServerErrorResponse(writer, err)
-	}
-	return u, !wasError
-}
-
-func headerHandler[T, U any](writer http.ResponseWriter, request *http.Request, handel func(t *T) (*U, error), handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool), statusCode int) {
+func headerHandler[T, U any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool), statusCode int) {
 	if t, ok := handelValidator(writer, request); ok {
-		if u, ok := headerHandleErrorResponse(writer, t, handel); ok {
+		if u, ok := handleErrorResponse(writer, request, t, handel); ok {
 			response.ResponseJsonMarshal(writer, statusCode, u)
 		}
 	}

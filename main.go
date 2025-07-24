@@ -32,6 +32,8 @@ func setApiHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 	serveMux.HandleFunc("POST /api/refresh", apiCfg.RefreshHandler)
 	serveMux.HandleFunc("POST /api/revoke", apiCfg.RevokeHandler)
 	serveMux.HandleFunc("PUT /api/users", apiCfg.UpdateUserHandler)
+	serveMux.HandleFunc("DELETE /api/chirps/{chirpID}", apiCfg.DeleteChirpHandler)
+	serveMux.HandleFunc("POST /api/polka/webhooks", apiCfg.WebhookHandler)
 }
 func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
 	serveMux := http.NewServeMux()

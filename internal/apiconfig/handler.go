@@ -99,5 +99,13 @@ func (cfg *ApiConfig) RevokeHandler(writer http.ResponseWriter, request *http.Re
 	}
 }
 func (cfg *ApiConfig) UpdateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	panic("not implemented")
+	handler(writer, request, cfg.updateUserHandle, cfg.updateUserValidator, http.StatusOK)
+}
+
+func (cfg *ApiConfig) DeleteChirpHandler(writer http.ResponseWriter, request *http.Request) {
+	headerHandler(writer, request, cfg.deleteChirpHandle, cfg.chirpIDValidator, http.StatusNoContent)
+}
+
+func (cfg *ApiConfig) WebhookHandler(writer http.ResponseWriter, request *http.Request) {
+	handler(writer, request, cfg.webhookHandle, cfg.webhookValidator, http.StatusNoContent)
 }

@@ -1,0 +1,42 @@
+package apiconfig
+
+import (
+	"net/http"
+
+	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/response"
+	"github.com/google/uuid"
+)
+
+type webhook struct {
+	Event string `json:"event"`
+	Data  struct {
+		UserID string `json:"user_id"`
+	} `json:"data"`
+	User database.User `json:"user"`
+}
+
+func writeHeaderContentText(notOk bool, writer http.ResponseWriter, statusCode int) bool {
+
+	if notOk {
+		response.WriteHeaderContentText(writer, response.PLAIN, statusCode)
+	}
+	return notOk
+}
+
+func (cfg *ApiConfig) webhookValidator(writer http.ResponseWriter, request *http.Request, webhook *webhook) bool {
+
+	if writeHeaderContentText(webhook.Event != "user.upgraded", writer, http.StatusNoContent) {
+		return false
+	}
+
+	user, err := cfg.queries.GetUser(request.Context(), uuid.MustParse(webhook.Data.UserID))
+
+	if writeHeaderContentText(err != nil, writer, http.StatusNotFound) {
+		return false
+	}
+
+	webhook.User = user
+
+	return true
+}
