@@ -18,3 +18,8 @@ func writeHeaderContentTextOK(writer http.ResponseWriter, textType string) {
 	writer.Header().Set("Content-Type", fmt.Sprintf("text/%s; charset=utf-8", textType))
 	writer.WriteHeader(http.StatusOK)
 }
+
+func WriteHeaderContentText(writer http.ResponseWriter, textType string, statusCode int) {
+	writer.Header().Set("Content-Type", fmt.Sprintf("text/%s; charset=utf-8", textType))
+	writer.WriteHeader(statusCode)
+}

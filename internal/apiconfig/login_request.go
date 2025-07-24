@@ -15,7 +15,7 @@ type loginRequest struct {
 	User     *database.User `json:"user"`
 }
 
-func loginRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) (ok bool) {
+func (cfg *ApiConfig) loginRequestValidator(writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) (ok bool) {
 
 	user, err := cfg.queries.GetUserByEmail(context.Background(), loginRequest.Email)
 

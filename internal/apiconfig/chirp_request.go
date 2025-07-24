@@ -55,7 +55,7 @@ func (cfg *ApiConfig) validateJWTResponse(request *http.Request, writer http.Res
 	return userID, ok
 }
 
-func chirpRequestValidator(cfg *ApiConfig, writer http.ResponseWriter, request *http.Request, chirpRequest *chirpRequest) bool {
+func (cfg *ApiConfig) chirpRequestValidator(writer http.ResponseWriter, request *http.Request, chirpRequest *chirpRequest) bool {
 
 	if userID, ok := cfg.validateJWTResponse(request, writer); ok {
 		chirpRequest.UserID = userID

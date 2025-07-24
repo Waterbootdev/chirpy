@@ -31,6 +31,7 @@ func setApiHandleFuncs(serveMux *http.ServeMux, apiCfg *apiconfig.ApiConfig) {
 	serveMux.HandleFunc("POST /api/login", apiCfg.LoginHandler)
 	serveMux.HandleFunc("POST /api/refresh", apiCfg.RefreshHandler)
 	serveMux.HandleFunc("POST /api/revoke", apiCfg.RevokeHandler)
+	serveMux.HandleFunc("PUT /api/users", apiCfg.UpdateUserHandler)
 }
 func newServeMux(apiCfg *apiconfig.ApiConfig) *http.ServeMux {
 	serveMux := http.NewServeMux()

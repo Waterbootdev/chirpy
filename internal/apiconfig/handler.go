@@ -1,8 +1,11 @@
 package apiconfig
 
 import (
+	"database/sql"
 	"net/http"
+	"time"
 
+	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -59,21 +62,42 @@ func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.
 }
 
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.createUserHandle, allways[userRequest], http.StatusCreated)
+	handler(writer, request, cfg.createUserHandle, allways[userRequest], http.StatusCreated)
 }
 
 func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.createChirpHandle, chirpRequestValidator, http.StatusCreated)
+	handler(writer, request, cfg.createChirpHandle, cfg.chirpRequestValidator, http.StatusCreated)
 }
 
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
-	handler(cfg, writer, request, cfg.loginHandle, loginRequestValidator, http.StatusOK)
+	handler(writer, request, cfg.loginHandle, cfg.loginRequestValidator, http.StatusOK)
 }
 
 func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
-	panic("not implemented")
+	headerHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
 }
 
 func (cfg *ApiConfig) RevokeHandler(writer http.ResponseWriter, request *http.Request) {
+	token, ok := cfg.getRefreshToken(request)
+
+	if unauthorizedResponse(!ok, writer) {
+		return
+	}
+
+	err := cfg.queries.RevokeRefreshToken(request.Context(), database.RevokeRefreshTokenParams{
+		Token: token.Token,
+		RevokedAt: sql.NullTime{
+			Valid: true,
+			Time:  time.Now(),
+		},
+	})
+
+	if err == nil {
+		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusNoContent)
+	} else {
+		response.InternalServerErrorResponse(writer, err)
+	}
+}
+func (cfg *ApiConfig) UpdateUserHandler(writer http.ResponseWriter, request *http.Request) {
 	panic("not implemented")
 }
