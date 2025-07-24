@@ -9,10 +9,9 @@ import (
 )
 
 func (cfg *ApiConfig) chirpIDValidator(writer http.ResponseWriter, request *http.Request) (*database.Chirp, bool) {
-	userID, err := cfg.validateJWT(request)
+	userID, ok := cfg.validateJWTResponse(request, writer)
 
-	if err != nil {
-		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusForbidden)
+	if !ok {
 		return nil, false
 	}
 
@@ -23,7 +22,7 @@ func (cfg *ApiConfig) chirpIDValidator(writer http.ResponseWriter, request *http
 		return nil, false
 	}
 
-	ok := chirp.UserID == userID
+	ok = chirp.UserID == userID
 
 	if !ok {
 		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusForbidden)

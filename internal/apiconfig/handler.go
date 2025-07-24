@@ -38,8 +38,17 @@ func (cfg *ApiConfig) MiddlewareMetricsInc(next http.Handler) http.Handler {
 	})
 }
 
+func (cfg *ApiConfig) getChirps(authorId string, request *http.Request) ([]database.Chirp, error) {
+	if authorId == "" {
+		return cfg.queries.GetChirps(request.Context())
+	} else {
+		return cfg.queries.GetChirpsByUserID(request.Context(), uuid.MustParse(authorId))
+	}
+}
+
 func (cfg *ApiConfig) GetChirpsHandler(writer http.ResponseWriter, request *http.Request) {
-	chirps, err := cfg.queries.GetChirps(request.Context())
+
+	chirps, err := cfg.getChirps(request.URL.Query().Get("author_id"), request)
 
 	if err != nil {
 		response.InternalServerErrorResponse(writer, err)
@@ -47,6 +56,7 @@ func (cfg *ApiConfig) GetChirpsHandler(writer http.ResponseWriter, request *http
 	}
 
 	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirps(chirps))
+
 }
 
 func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.Request) {

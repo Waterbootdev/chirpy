@@ -16,6 +16,7 @@ type ApiConfig struct {
 	queries        *database.Queries
 	platform       string
 	secret         string
+	polkaKey       string
 }
 
 func (cfg *ApiConfig) validateJWT(request *http.Request) (uuid.UUID, error) {
@@ -36,6 +37,7 @@ func NewApiConfig() *ApiConfig {
 		queries:        database.GetDatabaseQueries(),
 		platform:       os.Getenv("PLATFORM"),
 		secret:         os.Getenv("SECRET"),
+		polkaKey:       os.Getenv("POLKA_KEY"),
 	}
 }
 

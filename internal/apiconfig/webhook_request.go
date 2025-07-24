@@ -3,6 +3,7 @@ package apiconfig
 import (
 	"net/http"
 
+	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
@@ -24,7 +25,21 @@ func writeHeaderContentText(notOk bool, writer http.ResponseWriter, statusCode i
 	return notOk
 }
 
+func (cfg *ApiConfig) validatePolkaKey(request *http.Request) bool {
+	apiKey, err := auth.GetApiKey(request.Header)
+
+	if err != nil {
+		return false
+	}
+
+	return apiKey == cfg.polkaKey
+}
+
 func (cfg *ApiConfig) webhookValidator(writer http.ResponseWriter, request *http.Request, webhook *webhook) bool {
+
+	if writeHeaderContentText(!cfg.validatePolkaKey(request), writer, http.StatusUnauthorized) {
+		return false
+	}
 
 	if writeHeaderContentText(webhook.Event != "user.upgraded", writer, http.StatusNoContent) {
 		return false
