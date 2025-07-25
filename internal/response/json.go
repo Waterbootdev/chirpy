@@ -12,9 +12,6 @@ func ResponseJsonData(writer http.ResponseWriter, statusCode int, data []byte) {
 }
 
 func ResponseJsonMarshal(writer http.ResponseWriter, statusCode int, v interface{}) {
-	if v == nil {
-		return
-	}
 	data, err := json.Marshal(v)
 	if err != nil {
 		InternalServerErrorResponse(writer, err)

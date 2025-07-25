@@ -2,10 +2,12 @@ package apiconfig
 
 import (
 	"net/http"
-
 	"slices"
 	"strings"
+	"time"
 
+	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -63,4 +65,25 @@ func (cfg *ApiConfig) chirpRequestValidator(writer http.ResponseWriter, request 
 	} else {
 		return ok
 	}
+}
+
+func currentProfaneWords() []string {
+	return []string{"kerfuffle", "sharbert", "fornax"}
+}
+
+func (cfg *ApiConfig) createChirpHandle(request *http.Request, chirpRequest *chirpRequest) (*chirp, error) {
+	chirpRequest.cleanProfaneWords(currentProfaneWords())
+	timeNow := time.Now()
+	c, err := cfg.queries.CreateChirp(request.Context(), database.CreateChirpParams{
+		ID:        uuid.New(),
+		CreatedAt: timeNow,
+		UpdatedAt: timeNow,
+		Body:      chirpRequest.Body,
+		UserID:    chirpRequest.UserID,
+	})
+	return fromDatabaseChirp(&c), err
+}
+
+func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
+	generic_handler.HandlerBody(writer, request, cfg.createChirpHandle, cfg.chirpRequestValidator, http.StatusCreated)
 }

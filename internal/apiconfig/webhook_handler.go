@@ -2,9 +2,11 @@ package apiconfig
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -54,4 +56,16 @@ func (cfg *ApiConfig) webhookValidator(writer http.ResponseWriter, request *http
 	webhook.User = user
 
 	return true
+}
+
+func (cfg *ApiConfig) webhookHandle(request *http.Request, webhook *webhook) error {
+	return cfg.queries.UpdateIsChirpyRed(request.Context(), database.UpdateIsChirpyRedParams{
+		ID:          webhook.User.ID,
+		IsChirpyRed: true,
+		UpdatedAt:   time.Now(),
+	})
+}
+
+func (cfg *ApiConfig) WebhookHandler(writer http.ResponseWriter, request *http.Request) {
+	generic_handler.Handler(writer, request, cfg.webhookHandle, cfg.webhookValidator)
 }

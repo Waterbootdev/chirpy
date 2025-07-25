@@ -6,8 +6,13 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 )
+
+type accesToken struct {
+	Token string `json:"token"`
+}
 
 func unauthorizedResponse(unauthorized bool, writer http.ResponseWriter) bool {
 	if unauthorized {
@@ -46,4 +51,19 @@ func (cfg *ApiConfig) refreshTokenValidator(writer http.ResponseWriter, request 
 	}
 
 	return refreshToken, true
+}
+
+func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.RefreshToken) (*accesToken, error) {
+
+	token, err := cfg.makeJWT(refreshToken.UserID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &accesToken{Token: token}, nil
+}
+
+func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
+	generic_handler.HeaderBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
 }
