@@ -48,15 +48,6 @@ func (r *chirpRequest) isToLongErrorResponse(writer http.ResponseWriter) bool {
 	return toLong
 }
 
-func (cfg *ApiConfig) validateJWTResponse(request *http.Request, writer http.ResponseWriter) (uuid.UUID, bool) {
-	userID, err := cfg.validateJWT(request)
-	ok := err == nil
-	if !ok {
-		response.ErrorResponse(writer, http.StatusUnauthorized, "Unauthorized")
-	}
-	return userID, ok
-}
-
 func (cfg *ApiConfig) chirpRequestValidator(writer http.ResponseWriter, request *http.Request, chirpRequest *chirpRequest) bool {
 
 	if userID, ok := cfg.validateJWTResponse(request, writer); ok {
@@ -85,5 +76,5 @@ func (cfg *ApiConfig) createChirpHandle(request *http.Request, chirpRequest *chi
 }
 
 func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.HandlerBody(writer, request, cfg.createChirpHandle, cfg.chirpRequestValidator, http.StatusCreated)
+	generic_handler.ContentBodyHandler(writer, request, cfg.createChirpHandle, cfg.chirpRequestValidator, http.StatusCreated)
 }

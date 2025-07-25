@@ -23,13 +23,13 @@ func handelFromRequest[T any](writer http.ResponseWriter, request *http.Request,
 	}
 }
 
-func Handler[T any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) error, requestValidator func(writer http.ResponseWriter, request *http.Request, t *T) bool) {
+func NoContentBodyHandler[T any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) error, requestValidator func(writer http.ResponseWriter, request *http.Request, t *T) bool) {
 	if ok := handelFromRequest(writer, request, handel, requestValidator); ok {
 		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusNoContent)
 	}
 }
 
-func HeaderHandler[T any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) error, handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool)) {
+func NoContentNoBodyHandler[T any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) error, handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool)) {
 	if t, ok := handelValidator(writer, request); ok {
 		if ok := handleErrorResponse(writer, request, t, handel); ok {
 			response.WriteHeaderContentText(writer, response.PLAIN, http.StatusNoContent)

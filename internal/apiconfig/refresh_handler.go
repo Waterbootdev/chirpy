@@ -65,5 +65,5 @@ func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.Ref
 }
 
 func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.HeaderBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
+	generic_handler.ContentNoBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
 }

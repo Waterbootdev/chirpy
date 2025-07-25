@@ -23,13 +23,13 @@ func handelBodyFromRequest[T, U any](writer http.ResponseWriter, request *http.R
 	}
 }
 
-func HandlerBody[T, U any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), requestValidator func(writer http.ResponseWriter, request *http.Request, t *T) bool, statusCode int) {
+func ContentBodyHandler[T, U any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), requestValidator func(writer http.ResponseWriter, request *http.Request, t *T) bool, statusCode int) {
 	if u, ok := handelBodyFromRequest(writer, request, handel, requestValidator); ok {
 		response.ResponseJsonMarshal(writer, statusCode, u)
 	}
 }
 
-func HeaderBodyHandler[T, U any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool), statusCode int) {
+func ContentNoBodyHandler[T, U any](writer http.ResponseWriter, request *http.Request, handel func(request *http.Request, t *T) (*U, error), handelValidator func(writer http.ResponseWriter, request *http.Request) (*T, bool), statusCode int) {
 	if t, ok := handelValidator(writer, request); ok {
 		if u, ok := handleBodyErrorResponse(writer, request, t, handel); ok {
 			response.ResponseJsonMarshal(writer, statusCode, u)

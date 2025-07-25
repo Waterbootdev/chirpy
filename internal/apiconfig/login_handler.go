@@ -100,5 +100,5 @@ func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequ
 }
 
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.HandlerBody(writer, request, cfg.loginHandle, cfg.loginRequestValidator, http.StatusOK)
+	generic_handler.ContentBodyHandler(writer, request, cfg.loginHandle, cfg.loginRequestValidator, http.StatusOK)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
 
@@ -25,6 +26,15 @@ func (cfg *ApiConfig) validateJWT(request *http.Request) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 	return auth.ValidateJWT(bearerToken, cfg.secret)
+}
+
+func (cfg *ApiConfig) validateJWTResponse(request *http.Request, writer http.ResponseWriter) (uuid.UUID, bool) {
+	userID, err := cfg.validateJWT(request)
+	ok := err == nil
+	if !ok {
+		response.ErrorResponse(writer, http.StatusUnauthorized, "Unauthorized")
+	}
+	return userID, ok
 }
 
 func (cfg *ApiConfig) makeJWT(userID uuid.UUID) (string, error) {

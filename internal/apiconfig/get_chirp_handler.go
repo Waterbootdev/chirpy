@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Waterbootdev/chirpy/internal/database"
+	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -18,14 +19,23 @@ func fromDatabaseChirp(dbChirp *database.Chirp) *chirp {
 	}
 }
 
-func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.Request) {
+func (cfg *ApiConfig) getChirpValidator(writer http.ResponseWriter, request *http.Request) (*database.Chirp, bool) {
 	id := uuid.MustParse(request.PathValue("chirpID"))
 	chirp, err := cfg.queries.GetChirp(request.Context(), id)
 
 	if err != nil {
 		response.ErrorResponse(writer, http.StatusNotFound, "Chirp not found")
-		return
+		return nil, false
+
 	}
 
-	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirp(&chirp))
+	return &chirp, true
+}
+
+func (cfg *ApiConfig) getChirpHandle(request *http.Request, chirp *database.Chirp) (*chirp, error) {
+	return fromDatabaseChirp(chirp), nil
+}
+
+func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.Request) {
+	generic_handler.ContentNoBodyHandler(writer, request, cfg.getChirpHandle, cfg.getChirpValidator, http.StatusOK)
 }

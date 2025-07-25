@@ -38,5 +38,5 @@ func (cfg *ApiConfig) deleteChirpHandle(request *http.Request, chirp *database.C
 }
 
 func (cfg *ApiConfig) DeleteChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.HeaderHandler(writer, request, cfg.deleteChirpHandle, cfg.chirpIDValidator)
+	generic_handler.NoContentNoBodyHandler(writer, request, cfg.deleteChirpHandle, cfg.chirpIDValidator)
 }

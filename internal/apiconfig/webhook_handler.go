@@ -67,5 +67,5 @@ func (cfg *ApiConfig) webhookHandle(request *http.Request, webhook *webhook) err
 }
 
 func (cfg *ApiConfig) WebhookHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.Handler(writer, request, cfg.webhookHandle, cfg.webhookValidator)
+	generic_handler.NoContentBodyHandler(writer, request, cfg.webhookHandle, cfg.webhookValidator)
 }

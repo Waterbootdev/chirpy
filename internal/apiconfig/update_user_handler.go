@@ -45,5 +45,5 @@ func (cfg *ApiConfig) updateUserHandle(request *http.Request, userRequest *updat
 }
 
 func (cfg *ApiConfig) UpdateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.HandlerBody(writer, request, cfg.updateUserHandle, cfg.updateUserValidator, http.StatusOK)
+	generic_handler.ContentBodyHandler(writer, request, cfg.updateUserHandle, cfg.updateUserValidator, http.StatusOK)
 }
