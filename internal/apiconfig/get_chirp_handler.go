@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -37,5 +36,5 @@ func (cfg *ApiConfig) getChirpHandle(request *http.Request, chirp *database.Chir
 }
 
 func (cfg *ApiConfig) GetChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.ContentNoBodyHandler(writer, request, cfg.getChirpHandle, cfg.getChirpValidator, http.StatusOK)
+	response.ContentNoBodyHandler(writer, request, cfg.getChirpHandle, cfg.getChirpValidator, http.StatusOK)
 }

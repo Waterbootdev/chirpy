@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -38,5 +37,5 @@ func (cfg *ApiConfig) deleteChirpHandle(request *http.Request, chirp *database.C
 }
 
 func (cfg *ApiConfig) DeleteChirpHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.NoContentNoBodyHandler(writer, request, cfg.deleteChirpHandle, cfg.chirpIDValidator)
+	response.NoContentNoBodyHandler(writer, request, cfg.deleteChirpHandle, cfg.chirpIDValidator)
 }

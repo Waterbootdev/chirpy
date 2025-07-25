@@ -6,7 +6,7 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
+	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
 
@@ -45,5 +45,5 @@ func (cfg *ApiConfig) updateUserHandle(request *http.Request, userRequest *updat
 }
 
 func (cfg *ApiConfig) UpdateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.ContentBodyHandler(writer, request, cfg.updateUserHandle, cfg.updateUserValidator, http.StatusOK)
+	response.ContentBodyHandler(writer, request, cfg.updateUserHandle, cfg.updateUserValidator, http.StatusOK)
 }

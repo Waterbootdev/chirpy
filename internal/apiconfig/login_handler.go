@@ -10,7 +10,6 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
@@ -100,5 +99,5 @@ func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequ
 }
 
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.ContentBodyHandler(writer, request, cfg.loginHandle, cfg.loginRequestValidator, http.StatusOK)
+	response.ContentBodyHandler(writer, request, cfg.loginHandle, cfg.loginRequestValidator, http.StatusOK)
 }

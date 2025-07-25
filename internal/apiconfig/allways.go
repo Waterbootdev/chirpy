@@ -1,4 +1,4 @@
-package generic_handler
+package apiconfig
 
 import "net/http"
 

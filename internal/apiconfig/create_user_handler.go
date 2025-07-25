@@ -6,7 +6,7 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
+	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
 
@@ -34,5 +34,5 @@ func (cfg *ApiConfig) createUserHandle(request *http.Request, userRequest *userR
 }
 
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.ContentBodyHandler(writer, request, cfg.createUserHandle, generic_handler.Allways[userRequest], http.StatusCreated)
+	response.ContentBodyHandler(writer, request, cfg.createUserHandle, Allways[userRequest], http.StatusCreated)
 }

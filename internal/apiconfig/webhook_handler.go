@@ -6,7 +6,6 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -67,5 +66,5 @@ func (cfg *ApiConfig) webhookHandle(request *http.Request, webhook *webhook) err
 }
 
 func (cfg *ApiConfig) WebhookHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.NoContentBodyHandler(writer, request, cfg.webhookHandle, cfg.webhookValidator)
+	response.NoContentBodyHandler(writer, request, cfg.webhookHandle, cfg.webhookValidator)
 }

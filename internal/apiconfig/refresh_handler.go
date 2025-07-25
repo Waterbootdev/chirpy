@@ -6,7 +6,6 @@ import (
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
-	"github.com/Waterbootdev/chirpy/internal/generic_handler"
 	"github.com/Waterbootdev/chirpy/internal/response"
 )
 
@@ -65,5 +64,5 @@ func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.Ref
 }
 
 func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
-	generic_handler.ContentNoBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
+	response.ContentNoBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
 }
