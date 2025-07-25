@@ -10,8 +10,7 @@ const PRINTERROR bool = true
 
 func (cfg *ApiConfig) ResetHandler(writer http.ResponseWriter, request *http.Request) {
 
-	if cfg.platform != "dev" {
-		response.ErrorResponse(writer, http.StatusForbidden, "Forbidden")
+	if response.ErrorResponse(cfg.platform != "dev", writer, http.StatusForbidden, "Forbidden") {
 		return
 	}
 

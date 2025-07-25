@@ -17,19 +17,15 @@ func (cfg *ApiConfig) chirpIDValidator(writer http.ResponseWriter, request *http
 
 	chirp, err := cfg.queries.GetChirp(request.Context(), uuid.MustParse(request.PathValue("chirpID")))
 
-	if err != nil {
-		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusForbidden)
+	if response.WriteHeaderContentText(err != nil, writer, http.StatusForbidden) {
 		return nil, false
 	}
 
-	ok = chirp.UserID == userID
-
-	if !ok {
-		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusForbidden)
+	if response.WriteHeaderContentText(chirp.UserID != userID, writer, http.StatusForbidden) {
 		return nil, false
 	}
 
-	return &chirp, ok
+	return &chirp, true
 }
 
 func (cfg *ApiConfig) deleteChirpHandle(request *http.Request, chirp *database.Chirp) error {

@@ -25,7 +25,7 @@ func (cfg *ApiConfig) RevokeHandler(writer http.ResponseWriter, request *http.Re
 	})
 
 	if err == nil {
-		response.WriteHeaderContentText(writer, response.PLAIN, http.StatusNoContent)
+		response.WriteHeaderNoContent(writer)
 	} else {
 		response.InternalServerErrorResponse(writer, err)
 	}

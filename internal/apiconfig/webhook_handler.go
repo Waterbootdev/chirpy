@@ -18,14 +18,6 @@ type webhook struct {
 	User database.User `json:"user"`
 }
 
-func writeHeaderContentText(notOk bool, writer http.ResponseWriter, statusCode int) bool {
-
-	if notOk {
-		response.WriteHeaderContentText(writer, response.PLAIN, statusCode)
-	}
-	return notOk
-}
-
 func (cfg *ApiConfig) validatePolkaKey(request *http.Request) bool {
 	apiKey, err := auth.GetApiKey(request.Header)
 
@@ -38,17 +30,17 @@ func (cfg *ApiConfig) validatePolkaKey(request *http.Request) bool {
 
 func (cfg *ApiConfig) webhookValidator(writer http.ResponseWriter, request *http.Request, webhook *webhook) bool {
 
-	if writeHeaderContentText(!cfg.validatePolkaKey(request), writer, http.StatusUnauthorized) {
+	if response.WriteHeaderContentText(!cfg.validatePolkaKey(request), writer, http.StatusNoContent) {
 		return false
 	}
 
-	if writeHeaderContentText(webhook.Event != "user.upgraded", writer, http.StatusNoContent) {
+	if response.WriteHeaderContentText(webhook.Event != "user.upgraded", writer, http.StatusNoContent) {
 		return false
 	}
 
 	user, err := cfg.queries.GetUser(request.Context(), uuid.MustParse(webhook.Data.UserID))
 
-	if writeHeaderContentText(err != nil, writer, http.StatusNotFound) {
+	if response.WriteHeaderContentText(err != nil, writer, http.StatusNotFound) {
 		return false
 	}
 

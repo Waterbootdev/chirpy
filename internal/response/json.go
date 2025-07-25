@@ -24,7 +24,7 @@ type responseError struct {
 	Error string `json:"error"`
 }
 
-func ErrorResponse(writer http.ResponseWriter, statusCode int, currentResponseError string) {
+func errorResponse(writer http.ResponseWriter, statusCode int, currentResponseError string) {
 	ResponseJsonMarshal(writer, statusCode, responseError{Error: currentResponseError})
 }
 
@@ -32,8 +32,17 @@ func FromRequestErrorResponse[T any](writer http.ResponseWriter, request *http.R
 	decoder := json.NewDecoder(request.Body)
 	wasError = decoder.Decode(&t) != nil
 	if wasError {
-		ErrorResponse(writer, http.StatusInternalServerError, "Something went wrong")
+		errorResponse(writer, http.StatusInternalServerError, "Something went wrong")
 	}
 
 	return t, !wasError
+}
+
+func ErrorResponse(notOk bool, writer http.ResponseWriter, statusCode int, currentResponseError string) bool {
+	if notOk {
+		ResponseJsonMarshal(writer, statusCode, responseError{Error: currentResponseError})
+
+	}
+
+	return notOk
 }

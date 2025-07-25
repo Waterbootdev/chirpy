@@ -19,7 +19,18 @@ func writeHeaderContentTextOK(writer http.ResponseWriter, textType string) {
 	writer.WriteHeader(http.StatusOK)
 }
 
-func WriteHeaderContentText(writer http.ResponseWriter, textType string, statusCode int) {
+func writeHeaderContentText(writer http.ResponseWriter, textType string, statusCode int) {
 	writer.Header().Set("Content-Type", fmt.Sprintf("text/%s; charset=utf-8", textType))
 	writer.WriteHeader(statusCode)
+}
+
+func WriteHeaderContentText(notOk bool, writer http.ResponseWriter, statusCode int) bool {
+	if notOk {
+		writeHeaderContentText(writer, PLAIN, statusCode)
+	}
+	return notOk
+}
+
+func WriteHeaderNoContent(writer http.ResponseWriter) {
+	writeHeaderContentText(writer, PLAIN, http.StatusNoContent)
 }

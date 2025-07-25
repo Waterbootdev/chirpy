@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
@@ -14,6 +13,8 @@ import (
 type chirpRequest struct {
 	Body   string    `json:"body"`
 	UserID uuid.UUID `json:"user_id"`
+	ID     uuid.UUID `json:"id"`
+	At     time.Time `json:"at"`
 }
 
 const MAX_CHIRP_LENGTH int = 140
@@ -38,13 +39,7 @@ func (r *chirpRequest) isToLong() bool {
 }
 
 func (r *chirpRequest) isToLongErrorResponse(writer http.ResponseWriter) bool {
-	toLong := r.isToLong()
-
-	if toLong {
-		response.ErrorResponse(writer, http.StatusBadRequest, "Chirp is too long")
-	}
-
-	return toLong
+	return response.ErrorResponse(r.isToLong(), writer, http.StatusBadRequest, "Chirp is too long")
 }
 
 func (cfg *ApiConfig) chirpRequestValidator(writer http.ResponseWriter, request *http.Request, chirpRequest *chirpRequest) bool {
@@ -63,15 +58,9 @@ func currentProfaneWords() []string {
 
 func (cfg *ApiConfig) createChirpHandle(request *http.Request, chirpRequest *chirpRequest) (*chirp, error) {
 	chirpRequest.cleanProfaneWords(currentProfaneWords())
-	timeNow := time.Now()
-	c, err := cfg.queries.CreateChirp(request.Context(), database.CreateChirpParams{
-		ID:        uuid.New(),
-		CreatedAt: timeNow,
-		UpdatedAt: timeNow,
-		Body:      chirpRequest.Body,
-		UserID:    chirpRequest.UserID,
-	})
-	return fromDatabaseChirp(&c), err
+	chirpRequest.At = time.Now()
+	chirpRequest.ID = uuid.New()
+	return cfg.createChirp(request, chirpRequest)
 }
 
 func (cfg *ApiConfig) CreateChirpHandler(writer http.ResponseWriter, request *http.Request) {

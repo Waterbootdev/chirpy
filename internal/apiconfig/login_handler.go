@@ -16,9 +16,12 @@ import (
 const EXPIRE_DURATION = 60 * 24 * time.Hour
 
 type loginRequest struct {
-	Password string         `json:"password"`
-	Email    string         `json:"email"`
-	User     *database.User `json:"user"`
+	Password     string         `json:"password"`
+	Email        string         `json:"email"`
+	User         *database.User `json:"user"`
+	RefreshToken string         `json:"refresh_token"`
+	AccesToken   string         `json:"acces_token"`
+	At           time.Time      `json:"at"`
 }
 
 type userToken struct {
@@ -43,59 +46,62 @@ func fromDatabaseUserToken(loginRequest *loginRequest, refreshToken *database.Re
 	}
 }
 
-func (cfg *ApiConfig) loginRequestValidator(writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) (ok bool) {
+func (cfg *ApiConfig) loginRequestValidator(writer http.ResponseWriter, request *http.Request, loginRequest *loginRequest) bool {
 
 	user, err := cfg.queries.GetUserByEmail(context.Background(), loginRequest.Email)
 
-	if ok = err == nil; !ok {
-		response.ErrorResponse(writer, http.StatusUnauthorized, "Incorrect email or password")
-		return ok
+	if response.ErrorResponse(err != nil, writer, http.StatusUnauthorized, "Incorrect email or password") {
+		return false
 	}
 
 	err = auth.CheckPasswordHash(loginRequest.Password, user.PasswordHash)
 
-	if ok = err == nil; !ok {
-		response.ErrorResponse(writer, http.StatusUnauthorized, "Incorrect email or password")
-		return ok
-	}
-
-	loginRequest.User = &user
-
-	return ok
-}
-
-func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequest) (*userToken, error) {
-
-	accesToken, err := cfg.makeJWT(loginRequest.User.ID)
-
-	if err != nil {
-		return nil, err
+	if response.ErrorResponse(err != nil, writer, http.StatusUnauthorized, "Incorrect email or password") {
+		return false
 	}
 
 	refreshToken, err := auth.MakeRefreshToken()
 
-	if err != nil {
-		return nil, err
+	if response.ErrorResponse(err != nil, writer, http.StatusInternalServerError, "Internal server error") {
+		return false
 	}
-	timeNow := time.Now()
+
+	accesToken, err := cfg.makeJWT(user.ID)
+
+	if response.ErrorResponse(err != nil, writer, http.StatusInternalServerError, "Internal server error") {
+		return false
+	}
+
+	loginRequest.User = &user
+	loginRequest.At = time.Now()
+	loginRequest.RefreshToken = refreshToken
+	loginRequest.AccesToken = accesToken
+
+	return true
+}
+
+func (cfg *ApiConfig) createRefreshToken(request *http.Request, loginRequest *loginRequest) (*database.RefreshToken, error) {
 
 	databaseRefreshToken, err := cfg.queries.CreateRefreshToken(request.Context(), database.CreateRefreshTokenParams{
-		Token:     refreshToken,
-		CreatedAt: timeNow,
-		UpdatedAt: timeNow,
+		Token:     loginRequest.RefreshToken,
+		CreatedAt: loginRequest.At,
+		UpdatedAt: loginRequest.At,
 		UserID:    loginRequest.User.ID,
-		ExpiresAt: timeNow.Add(EXPIRE_DURATION),
+		ExpiresAt: loginRequest.At.Add(EXPIRE_DURATION),
 		RevokedAt: sql.NullTime{
 			Valid: false,
 			Time:  time.Time{},
 		},
 	})
 
-	if err != nil {
-		return nil, err
-	}
+	return &databaseRefreshToken, err
+}
 
-	return fromDatabaseUserToken(loginRequest, &databaseRefreshToken, accesToken), nil
+func (cfg *ApiConfig) loginHandle(request *http.Request, loginRequest *loginRequest) (*userToken, error) {
+	accesToken := loginRequest.AccesToken
+	loginRequest.AccesToken = ""
+	databaseRefreshToken, err := cfg.createRefreshToken(request, loginRequest)
+	return fromDatabaseUserToken(loginRequest, databaseRefreshToken, accesToken), err
 }
 
 func (cfg *ApiConfig) LoginHandler(writer http.ResponseWriter, request *http.Request) {

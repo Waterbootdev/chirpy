@@ -14,10 +14,7 @@ type accesToken struct {
 }
 
 func unauthorizedResponse(unauthorized bool, writer http.ResponseWriter) bool {
-	if unauthorized {
-		response.ErrorResponse(writer, http.StatusUnauthorized, "Unauthorized")
-	}
-	return unauthorized
+	return response.ErrorResponse(unauthorized, writer, http.StatusUnauthorized, "Unauthorized")
 }
 
 func (cfg *ApiConfig) getRefreshToken(request *http.Request) (*database.RefreshToken, bool) {

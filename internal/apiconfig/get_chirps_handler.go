@@ -46,22 +46,30 @@ func (cfg *ApiConfig) getChirpsOrder(sortOrder SortOrder, request *http.Request)
 	return nil, nil
 }
 
-func fromDatabaseChirps(dbChirp []database.Chirp) []chirp {
+func fromDatabaseChirps(dbChirp []database.Chirp) *[]chirp {
 	chirps := make([]chirp, len(dbChirp))
 	for i, dbChirp := range dbChirp {
 		chirps[i] = *fromDatabaseChirp(&dbChirp)
 	}
-	return chirps
+	return &chirps
 }
 
-func (cfg *ApiConfig) GetChirpsHandler(writer http.ResponseWriter, request *http.Request) {
+func (cfg *ApiConfig) getChirpsValidator(writer http.ResponseWriter, request *http.Request) (*[]database.Chirp, bool) {
 
-	chirps, err := cfg.getChirpsOrder(getSortOrder(request), request)
+	dbChirps, err := cfg.getChirpsOrder(getSortOrder(request), request)
 
 	if err != nil {
 		response.InternalServerErrorResponse(writer, err)
-		return
+		return nil, false
 	}
 
-	response.ResponseJsonMarshal(writer, http.StatusOK, fromDatabaseChirps(chirps))
+	return &dbChirps, true
+}
+
+func (cfg *ApiConfig) getChirpsHandle(request *http.Request, dbChirps *[]database.Chirp) (*[]chirp, error) {
+	return fromDatabaseChirps(*dbChirps), nil
+}
+
+func (cfg *ApiConfig) GetChirpsHandler(writer http.ResponseWriter, request *http.Request) {
+	response.ContentNoBodyHandler(writer, request, cfg.getChirpsHandle, cfg.getChirpsValidator, http.StatusOK)
 }

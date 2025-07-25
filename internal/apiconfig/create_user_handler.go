@@ -5,34 +5,29 @@ import (
 	"time"
 
 	"github.com/Waterbootdev/chirpy/internal/auth"
-	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
 )
 
-type userRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+func (cfg *ApiConfig) createUserValidator(writer http.ResponseWriter, request *http.Request, userRequest *userRequest) bool {
+
+	password, err := auth.HashPassword(userRequest.Password)
+
+	if response.ErrorResponse(err != nil, writer, http.StatusBadRequest, "Invalid password") {
+		return false
+	}
+
+	userRequest.Password = password
+
+	return true
 }
 
 func (cfg *ApiConfig) createUserHandle(request *http.Request, userRequest *userRequest) (*user, error) {
-	password, err := auth.HashPassword(userRequest.Password)
-
-	if err != nil {
-		return nil, err
-	}
-
-	timeNow := time.Now()
-	c, err := cfg.queries.CreateUser(request.Context(), database.CreateUserParams{
-		ID:           uuid.New(),
-		CreatedAt:    timeNow,
-		UpdatedAt:    timeNow,
-		Email:        userRequest.Email,
-		PasswordHash: password,
-	})
-	return fromDatabaseUser(&c), err
+	userRequest.ID = uuid.New()
+	userRequest.At = time.Now()
+	return cfg.createUser(request, userRequest)
 }
 
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	response.ContentBodyHandler(writer, request, cfg.createUserHandle, response.Allways[userRequest], http.StatusCreated)
+	response.ContentBodyHandler(writer, request, cfg.createUserHandle, cfg.createUserValidator, http.StatusCreated)
 }

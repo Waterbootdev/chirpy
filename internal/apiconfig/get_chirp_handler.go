@@ -22,10 +22,8 @@ func (cfg *ApiConfig) getChirpValidator(writer http.ResponseWriter, request *htt
 	id := uuid.MustParse(request.PathValue("chirpID"))
 	chirp, err := cfg.queries.GetChirp(request.Context(), id)
 
-	if err != nil {
-		response.ErrorResponse(writer, http.StatusNotFound, "Chirp not found")
+	if response.ErrorResponse(err != nil, writer, http.StatusNotFound, "Chirp not found") {
 		return nil, false
-
 	}
 
 	return &chirp, true
