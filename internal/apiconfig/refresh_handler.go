@@ -13,10 +13,6 @@ type accesToken struct {
 	Token string `json:"token"`
 }
 
-func unauthorizedResponse(unauthorized bool, writer http.ResponseWriter) bool {
-	return response.ErrorResponse(unauthorized, writer, http.StatusUnauthorized, "Unauthorized")
-}
-
 func (cfg *ApiConfig) getRefreshToken(request *http.Request) (*database.RefreshToken, bool) {
 
 	token, err := auth.GetBearerToken(request.Header)
@@ -38,18 +34,18 @@ func (cfg *ApiConfig) refreshTokenValidator(writer http.ResponseWriter, request 
 
 	refreshToken, ok := cfg.getRefreshToken(request)
 
-	if unauthorizedResponse(!ok, writer) {
+	if response.UnauthorizedResponse(!ok, writer) {
 		return nil, false
 	}
 
-	if unauthorizedResponse(refreshToken.RevokedAt.Valid || refreshToken.ExpiresAt.Before(time.Now()), writer) {
+	if response.UnauthorizedResponse(refreshToken.RevokedAt.Valid || refreshToken.ExpiresAt.Before(time.Now()), writer) {
 		return nil, false
 	}
 
 	return refreshToken, true
 }
 
-func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.RefreshToken) (*accesToken, error) {
+func (cfg *ApiConfig) refreshHandle(_ *http.Request, refreshToken *database.RefreshToken) (*accesToken, error) {
 
 	token, err := cfg.makeJWT(refreshToken.UserID)
 
@@ -61,5 +57,5 @@ func (cfg *ApiConfig) refreshHandler(_ *http.Request, refreshToken *database.Ref
 }
 
 func (cfg *ApiConfig) RefreshHandler(writer http.ResponseWriter, request *http.Request) {
-	response.ContentNoBodyHandler(writer, request, cfg.refreshHandler, cfg.refreshTokenValidator, http.StatusOK)
+	response.ContentNoBodyHandler(writer, request, cfg.refreshHandle, cfg.refreshTokenValidator, http.StatusOK)
 }

@@ -12,7 +12,7 @@ import (
 func (cfg *ApiConfig) RevokeHandler(writer http.ResponseWriter, request *http.Request) {
 	token, ok := cfg.getRefreshToken(request)
 
-	if unauthorizedResponse(!ok, writer) {
+	if response.UnauthorizedResponse(!ok, writer) {
 		return
 	}
 

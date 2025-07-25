@@ -46,3 +46,10 @@ func ErrorResponse(notOk bool, writer http.ResponseWriter, statusCode int, curre
 
 	return notOk
 }
+
+func ForbiddenErrorResponse(forbidden bool, writer http.ResponseWriter) bool {
+	return ErrorResponse(forbidden, writer, http.StatusForbidden, "Forbidden")
+}
+func UnauthorizedResponse(unauthorized bool, writer http.ResponseWriter) bool {
+	return ErrorResponse(unauthorized, writer, http.StatusUnauthorized, "Unauthorized")
+}

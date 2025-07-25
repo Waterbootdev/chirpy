@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Waterbootdev/chirpy/internal/auth"
 	"github.com/Waterbootdev/chirpy/internal/database"
 	"github.com/Waterbootdev/chirpy/internal/response"
 	"github.com/google/uuid"
@@ -16,16 +15,6 @@ type webhook struct {
 		UserID string `json:"user_id"`
 	} `json:"data"`
 	User database.User `json:"user"`
-}
-
-func (cfg *ApiConfig) validatePolkaKey(request *http.Request) bool {
-	apiKey, err := auth.GetApiKey(request.Header)
-
-	if err != nil {
-		return false
-	}
-
-	return apiKey == cfg.polkaKey
 }
 
 func (cfg *ApiConfig) webhookValidator(writer http.ResponseWriter, request *http.Request, webhook *webhook) bool {

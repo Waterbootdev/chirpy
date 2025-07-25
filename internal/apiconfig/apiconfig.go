@@ -40,3 +40,13 @@ func (cfg *ApiConfig) validateJWT(request *http.Request) (uuid.UUID, error) {
 func (cfg *ApiConfig) makeJWT(userID uuid.UUID) (string, error) {
 	return auth.MakeJWT(userID, cfg.secret, time.Hour)
 }
+
+func (cfg *ApiConfig) validatePolkaKey(request *http.Request) bool {
+	apiKey, err := auth.GetApiKey(request.Header)
+
+	if err != nil {
+		return false
+	}
+
+	return apiKey == cfg.polkaKey
+}
