@@ -34,5 +34,5 @@ func (cfg *ApiConfig) createUserHandle(request *http.Request, userRequest *userR
 }
 
 func (cfg *ApiConfig) CreateUserHandler(writer http.ResponseWriter, request *http.Request) {
-	response.ContentBodyHandler(writer, request, cfg.createUserHandle, Allways[userRequest], http.StatusCreated)
+	response.ContentBodyHandler(writer, request, cfg.createUserHandle, response.Allways[userRequest], http.StatusCreated)
 }

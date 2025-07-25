@@ -1,4 +1,4 @@
-package apiconfig
+package response
 
 import "net/http"
 
